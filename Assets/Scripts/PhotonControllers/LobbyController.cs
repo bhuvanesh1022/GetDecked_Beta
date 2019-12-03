@@ -14,6 +14,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject lobbyConnectBtn;
     [SerializeField] private GameObject loadingBtn;
+    [SerializeField] private GameObject nextBtn;
     [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject titlePanel;
@@ -41,9 +42,21 @@ public class LobbyController : MonoBehaviourPunCallbacks
     void Update()
     {
         if (playerNameInput.text.Length >= 2)
+        {
             lobbyConnectBtn.GetComponent<Button>().interactable = true;
+            for (int i = 0; i < avatarSelectors.Length; i++)
+            {
+                avatarSelectors[i].GetComponent<Button>().interactable = true; 
+            }
+        }
         else
+        {
             lobbyConnectBtn.GetComponent<Button>().interactable = false;
+            for (int i = 0; i < avatarSelectors.Length; i++)
+            {
+                avatarSelectors[i].GetComponent<Button>().interactable = false;
+            }
+        }
 
         if (roomNameInput.text.Length >= 2)
             roomCreateBtn.GetComponent<Button>().interactable = true;
@@ -56,6 +69,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = true;
         lobbyConnectBtn.SetActive(true);
         loadingBtn.SetActive(false);
+        nextBtn.SetActive(true);
         roomListings = new List<RoomInfo>();
 
         if (PlayerPrefs.HasKey("NickName"))
@@ -102,7 +116,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     public void ShowAvatarSelection()
     {
-        titlePanel.SetActive(false);
+        //titlePanel.SetActive(false);
         avatarPanel.SetActive(true);
     }
 

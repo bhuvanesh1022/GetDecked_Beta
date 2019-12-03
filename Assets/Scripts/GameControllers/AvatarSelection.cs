@@ -7,6 +7,6 @@ public class AvatarSelection : MonoBehaviour
 
     public void Update()
     {
-        GetComponent<Button>().interactable = !isSelected;
+        //GetComponent<Button>().interactable = !isSelected;
     }
 }
