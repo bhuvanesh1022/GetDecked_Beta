@@ -22,6 +22,7 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject[] characters;
     [SerializeField] private Sprite[] avatars;
     [SerializeField] private GameObject WaitingPanel;
+    [SerializeField] private GameObject StartPanel;
 
     private GameObject templisting;
     private bool isEntered;
@@ -120,7 +121,9 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
     {
         isEntered = true;
         if (PhotonNetwork.IsMasterClient)
-            WaitingPanel.GetComponentInChildren<TextMeshProUGUI>().text = "waiting...";
+        {
+            StartCoroutine(WaitForOthers());
+        }
 
         dataControl.myCharacter = characters[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]].name;
 
@@ -168,11 +171,12 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
         while (characterSelected < PhotonNetwork.PlayerList.Length - 1)
         {
             Debug.Log("Waiting");
+            WaitingPanel.GetComponentInChildren<TextMeshProUGUI>().text = "waiting...";
             yield return new WaitForSeconds(0.02f);
         }
 
-        WaitingPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
-        WaitingPanel.GetComponent<Button>().enabled = true;
+        WaitingPanel.SetActive(false);
+        StartPanel.SetActive(true);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
