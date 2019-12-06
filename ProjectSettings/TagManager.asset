@@ -6,6 +6,9 @@ TagManager:
   tags:
   - RoomController
   - DataController
+  - Controller
+  - Manager
+  - Wages
   layers:
   - Default
   - TransparentFX

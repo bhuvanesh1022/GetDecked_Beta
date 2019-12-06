@@ -9,6 +9,7 @@ using TMPro;
 public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static RoomController roomController;
+    public DataController DC;
 
     [SerializeField] private int multiPlayerSceneIndex;
     [SerializeField] private GameObject lobbyPanel;
@@ -29,10 +30,12 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
 
     public int characterSelected;
     public int enteredAt;
+    public int CharacterID;
     public PhotonView pv;
 
     public void Awake()
     {
+        DC = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
         if (roomController == null)
         {
             roomController = this;
@@ -77,8 +80,9 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
             tempText.text = player.NickName;
 
             Image tempImg = templisting.transform.GetChild(1).GetComponent<Image>();
-            int CharacterID = (int)player.CustomProperties["Avatar"];
+             CharacterID = (int)player.CustomProperties["Avatar"];          
             tempImg.sprite = avatars[CharacterID];
+           // DC.MyId = CharacterID;
         }
     }
 
@@ -125,7 +129,8 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
             StartCoroutine(WaitForOthers());
         }
 
-        dataControl.myCharacter = characters[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]].name;
+        dataControl.myCharacter = characters[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]].name;    
+        print("dataControl.myCharacter"+ dataControl.myCharacter);
 
         pv.RPC("ClearPlayerListings", RpcTarget.All, null);
         pv.RPC("ListPlayer", RpcTarget.All, null);
@@ -181,6 +186,6 @@ public class RoomController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-
+       
     }
 }
