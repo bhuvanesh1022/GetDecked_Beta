@@ -34,5 +34,8 @@ MonoBehaviour:
   - CharacterJoined
   - ClearPlayerListings
   - ListPlayer
+  - CardPlacing
+  - PlaceCard
+  - PlacingCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0

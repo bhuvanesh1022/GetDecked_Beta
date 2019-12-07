@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d98c8533e134feea3ba31c1d14a865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  multiPlayerSceneIndex: 0
+  multiPlayerSceneIndex: 1
   lobbyPanel: {fileID: 1348120272}
   roomPanel: {fileID: 655070648}
   roomsContainer: {fileID: 1523426152}
@@ -175,11 +175,11 @@ MonoBehaviour:
   mainPanel: {fileID: 837540195}
   dataControl: {fileID: 240513116}
   characters:
-  - {fileID: 3633486815019250746, guid: fe1c13abc4a584b84951e7f64e5d435f, type: 3}
-  - {fileID: 489227769994203411, guid: d9009690dbdc341beadf05e8fec6e7c7, type: 3}
+  - {fileID: 136458119715322588, guid: b6669fd838a2545bf9b2d6193fecc623, type: 3}
+  - {fileID: 7267781700949131618, guid: 1d48dde9b1f6845f79df5df6dfb66e1c, type: 3}
   avatars:
-  - {fileID: 21300000, guid: c5611e963bda146c2a04a1caf32f95a3, type: 3}
   - {fileID: 21300000, guid: b128223a4869b42ea9c3b9bbe802f977, type: 3}
+  - {fileID: 21300000, guid: c5611e963bda146c2a04a1caf32f95a3, type: 3}
   WaitingPanel: {fileID: 1310046594}
   StartPanel: {fileID: 216752672}
   characterSelected: 0
@@ -204,7 +204,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 1
+  viewIdField: 999
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!1 &65531293
@@ -2607,7 +2607,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -5137,7 +5137,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

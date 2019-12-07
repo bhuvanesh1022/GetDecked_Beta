@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LoginPage.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/GamePageBH.unity
+    guid: e58197e8ed73f428e97c22c59c1136b6
   m_configObjects: {}

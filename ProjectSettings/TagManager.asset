@@ -6,6 +6,7 @@ TagManager:
   tags:
   - RoomController
   - DataController
+  - GameplayManager
   layers:
   - Default
   - TransparentFX
