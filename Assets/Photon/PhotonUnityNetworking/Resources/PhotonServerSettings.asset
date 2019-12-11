@@ -37,5 +37,8 @@ MonoBehaviour:
   - CardPlacing
   - PlaceCard
   - PlacingCards
+  - Placecard
+  - Addplayers
+
   DisableAutoOpenWizard: 1
   ShowSettings: 0
