@@ -6,10 +6,13 @@ TagManager:
   tags:
   - RoomController
   - DataController
+  - GameplayManager
+  - AudioManager
   - Controller
   - Manager
   - Wages
   - PlayerObj
+
   layers:
   - Default
   - TransparentFX
