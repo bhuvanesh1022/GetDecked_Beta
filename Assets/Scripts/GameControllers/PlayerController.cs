@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     private PlayerBetManager _betManager;
     private PlayerSpecialManager _specialManager;
 
+    public bool isWon;
 
     public void Awake()
     {
@@ -45,12 +46,14 @@ public class PlayerController : MonoBehaviour, IPunObservable
             stream.SendNext(myName);
             stream.SendNext(cardPlaced);
             stream.SendNext(placedCard);
+            stream.SendNext(isWon);
         }
         if (stream.IsReading)
         {
             myName = (string)stream.ReceiveNext();
             cardPlaced = (bool)stream.ReceiveNext();
             placedCard = (int)stream.ReceiveNext();
+            isWon = (bool)stream.ReceiveNext();
         }
     }
 }

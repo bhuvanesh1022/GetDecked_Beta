@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Photon.Pun;
 
 public class DropManager : MonoBehaviour, IDropHandler
 {

@@ -116,7 +116,6 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     public void ShowAvatarSelection()
     {
-        //titlePanel.SetActive(false);
         avatarPanel.SetActive(true);
     }
 

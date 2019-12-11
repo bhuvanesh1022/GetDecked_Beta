@@ -151,4 +151,5 @@ MonoBehaviour:
   pv: {fileID: -6625149319997376055}
   myName: 
   cardPlaced: 0
-  placedCard: 0
+  placedCard: -1
+  isWon: 0
