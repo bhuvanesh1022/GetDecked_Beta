@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5672543887561462819}
   m_Layer: 5
   m_Name: Myplayer
-  m_TagString: Untagged
+  m_TagString: PlayerObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,6 +93,7 @@ MonoBehaviour:
   PLId: 0
   pv: {fileID: 5672543887561462819}
   avatarName: 
+  _PlayerCardVal: 0
 --- !u!114 &5672543887561462819
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ TagManager:
   - Controller
   - Manager
   - Wages
+  - PlayerObj
   layers:
   - Default
   - TransparentFX

@@ -13,8 +13,12 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public int PLId;
     public PhotonView pv;
     public string avatarName;
+    //
+    public bool _PlayerCardVal;
+
     private void Awake() {
         controller = GameObject.FindGameObjectWithTag("Controller").GetComponent<Controller>();
+        controller.Obj = this;
         DC = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
         //room = GameObject.FindGameObjectWithTag("RoomController").GetComponent<RoomController>();
         Mg = GameObject.FindGameObjectWithTag("Manager").GetComponent<Manager>();
@@ -42,7 +46,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         }
     void _PlayerPosition() {
         for (int i = 0; i < controller._PlayerPos.Length; i++) {
-            if (pv.IsMine) {//transform.GetComponent<PlayerObj>().
+            if (pv.IsMine) {
                 print("1---------->");
                 transform.parent = controller._PlayerPos[0].transform;
                 transform.localPosition = Vector3.zero;
@@ -70,6 +74,11 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
 
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-       
+        if (stream.IsWriting) {
+            stream.SendNext(_PlayerCardVal);
+        }
+        else if (stream.IsReading) {
+            _PlayerCardVal = (bool)stream.ReceiveNext();
+        }
     }
 }
