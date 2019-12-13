@@ -10,27 +10,36 @@ public class ItemDropHandler : MonoBehaviourPunCallbacks, IDropHandler,IPunObser
     public Controller controller;
     public WagesManager wages;
     public PlayerObj Obj;
+    public ItemDragHandler card;
+    public bool _CardDrop;
     private void Awake() {
         controller = FindObjectOfType<Controller>();
         wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
-    
 
     }
 
     public void OnDrop(PointerEventData eventData) {
         RectTransform rect = transform as RectTransform;
-       Obj._PlayerCardVal = true;
-       // ItemDragHandler.itemBeingDragged.transform.gameObject.SetActive(false);
-        controller._CardPlacing();
+        if (RectTransformUtility.RectangleContainsScreenPoint(rect, Input.mousePosition))
+        {
+            _CardDrop = true;
+            Obj._PlacedCard = true;
+            card = ItemDragHandler.itemBeingDragged.GetComponent<ItemDragHandler>();
+
+            Obj.CardId = card.Cnt;
+
+            // ItemDragHandler.itemBeingDragged.transform.gameObject.SetActive(false);
+            controller._CardPlacing();
+        }
     }
    
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
         if (stream.IsWriting) {
-            
+            stream.SendNext(_CardDrop);
         }
         else if (stream.IsReading) {
-            
+            _CardDrop = (bool)stream.ReceiveNext();
         }
     }
 }

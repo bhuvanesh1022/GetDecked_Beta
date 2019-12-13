@@ -90,10 +90,19 @@ MonoBehaviour:
   controller: {fileID: 0}
   Mg: {fileID: 0}
   DC: {fileID: 0}
+  Wage: {fileID: 0}
   PLId: 0
   pv: {fileID: 5672543887561462819}
   avatarName: 
-  _PlayerCardVal: 0
+  healthbar: {fileID: 0}
+  _TokenTxt: {fileID: 0}
+  currentBet: 2
+  _PlacedCard: 0
+  _placedBet: 1
+  CardId: 99
+  _IsplayerWin: 0
+  _IsSameCard: 0
+  _RemainingBet: 0
 --- !u!114 &5672543887561462819
 MonoBehaviour:
   m_ObjectHideFlags: 0
