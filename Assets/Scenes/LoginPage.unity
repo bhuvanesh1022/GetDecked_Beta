@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d98c8533e134feea3ba31c1d14a865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DC: {fileID: 0}
   multiPlayerSceneIndex: 1
   lobbyPanel: {fileID: 1348120272}
   roomPanel: {fileID: 655070648}
@@ -184,6 +185,7 @@ MonoBehaviour:
   StartPanel: {fileID: 216752672}
   characterSelected: 0
   enteredAt: 0
+  CharacterID: 0
   pv: {fileID: 46594977}
 --- !u!114 &46594977
 MonoBehaviour:
@@ -1221,6 +1223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myName: 
   myCharacter: 
+  MyId: 0
 --- !u!4 &240513117
 Transform:
   m_ObjectHideFlags: 0
