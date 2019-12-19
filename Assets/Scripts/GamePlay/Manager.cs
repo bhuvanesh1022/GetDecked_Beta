@@ -24,6 +24,12 @@ public class Manager : MonoBehaviourPunCallbacks
     {
          GameObject _Player = PhotonNetwork.Instantiate("Myplayer", Vector3.zero, Quaternion.identity);
         _DropManager.Obj = _Player.GetComponent<PlayerObj>();
+        //if (_Player.GetComponent<PlayerObj>().pv.IsMine) {
+        //    _Player.GetComponent<PlayerObj>().healthbar = _HealthBar[0];
+        //}
+        //else {
+        //    _Player.GetComponent<PlayerObj>().healthbar = _HealthBar[1];
+        //}
 
         //GameObject _HealthBar = PhotonNetwork.Instantiate("Health", Vector3.zero, Quaternion.identity);
         //_DropManager.Obj = _Player.GetComponent<PlayerObj>();

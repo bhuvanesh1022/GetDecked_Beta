@@ -27,14 +27,15 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
 
     // Card Details
     public Sprite[] _PlaceCardSprite;
-    public GameObject[] _PlacedCardPos, PlayerOutLine,_CircletxtDisplay;
+    public GameObject[] _PlacedCardHolder, PlayerOutLine,_CircletxtDisplay;
     public GameObject[] _cardItems;
     public TextMeshProUGUI[] _PlaceCardTxt;
     //Player
     public GameObject[] _PlayerPos;
     public Sprite[] _PlayerSprite;
     public int _CardCnt;
-     public bool _TempBool;
+     public bool _TempBool,_FinishTurn;
+    public GameObject CardVisible;
 
     //health
     [Header("Health details")]
@@ -48,6 +49,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public GameObject[] HealthLoader;
     public TextMeshProUGUI[] AvailableToken;
 
+    [Header("Special details")]
+    public GameObject[] _specialIcons;
+    int SpecialInt;
+    public bool _gameFinished;
 
     public void ReloadApp() {       
         PhotonNetwork.Disconnect();
@@ -59,161 +64,36 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     private void Start() {
+        CardVisible.SetActive(false);
+        _Visual_txt.text = "Place the bet and card.......";
         wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
-    }
+        for (int i = 0; i < _PlayerList.Count; i++) {
+            _PlayerList[i].GetComponent<PlayerObj>().currentHealth = _MaxHealth;
+        }
+        }
     private void Update() {
         if (!_TempBool) {
             _TimerCall();
         }
-        if (!_TempBool) {
-            StartCoroutine("WaitTime");
+
+        for (int i = 0; i < _PlayerList.Count; i++) {
+            _PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount = _PlayerList[i].GetComponent<PlayerObj>().currentHealth / _MaxHealth;
         }
-        //
-        StartCoroutine("ShowCard");
-        
+       StartCoroutine("FinishGame");
+
     }
-    IEnumerator ShowCard() {
+    IEnumerator FinishGame() {
         yield return new WaitForSeconds(2f);
         for (int i = 0; i < _PlayerList.Count; i++) {
-            if (_PlayerList[i].GetComponent<PlayerObj>()._IsplayerWin || _TempBool) {
-                AfterBet();
+            if (_PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount <= 0 && !_gameFinished) {
+                print("fill------");
+                _gameFinished = true;
+                wages.Bet_btn.SetActive(false);
+                _Visual_txt.text = " Game Finished !!!";
             }
         }
-
-    }
-        IEnumerator WaitTime() {
-        yield return new WaitForSeconds(2f);
-        _ResolutionUpdate();
-    }
-    void _ResolutionUpdate() {
-        if (_PlayerList.Count == _PlaceCardList.Count) {
-            for (int i = 0; i < _PlaceCardList.Count; i++) {
-                for (int j = i + 1; j < _PlaceCardList.Count; j++) {
-                    for (int a = 0; a < _PlayerList.Count; a++) {//health cal
-                        if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
-                            print("1----1----");
-                            _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
-                            print("2----");
-                            _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
-
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
-                            print("3----");
-                            _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
-
-                        }
-
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
-                            print("attack beats");
-                            _TempBool = true;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
-                            if (_PlaceCardList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
-                                //_PlayerList[a].GetComponent<WagesManager>()._Health = _PlayerList[a].GetComponent<WagesManager>()._BetValue + 1;
-                                HealthLoader[i].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                                print("Health-------" + wages._Health + "_MaxHealth---" + _MaxHealth);
-                            }
-                            
-
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
-                            print("attack beats");
-                            _TempBool = true;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
-                            if (_PlaceCardList[j].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
-                                // _PlayerList[a].GetComponent<WagesManager>()._Health = _PlayerList[a].GetComponent<WagesManager>()._BetValue + 1;
-                                HealthLoader[j].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                                print("Health-------" + wages._Health + "_MaxHealth---" + _MaxHealth);
-                            }
-                            
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
-                            print("throw beats");
-                            _TempBool = true;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
-                            if (_PlaceCardList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
-                                HealthLoader[i].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                            }
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
-                            print("throw beats");
-                            _TempBool = true;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
-                            if (_PlaceCardList[j].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
-                                HealthLoader[j].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                            }
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
-                            print("attack beats");
-                            _TempBool = true;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "  Is Won........";
-                            if (_PlaceCardList[j].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
-                                HealthLoader[j].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                            }
-                        }
-                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
-                            print("attack beats");
-                            _TempBool = true;
-                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "Is Won........";
-                            if (_PlaceCardList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                                wages._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
-                                HealthLoader[i].GetComponent<Image>().fillAmount = (float)(_MaxHealth - wages._Health) / _MaxHealth;
-                            }
-                        }
-                    }
-                }
-
-            }
-            StartCoroutine("Reset");
-           
-            print("clear--------");
-        }
-    }
-    IEnumerator Reset() {
-        yield return new WaitForSeconds(2f);
-        for (int i = 0; i < _PlaceCardList.Count; i++) {
-            for (int j = 0; j < _PlaceCardList.Count; j++) {
-                _PlaceCardList[i].GetComponent<PlayerObj>()._PlacedCard = false;
-                _PlaceCardList[i].GetComponent<PlayerObj>().CardId = 99;
-                _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
-               _TempBool = false;
-                _PlaceCardList[i].GetComponent<PlayerObj>().enabled = false;
-                PlayerOutLine[i].GetComponent<Image>().sprite = OutlineCard;//sprite
-                _CircletxtDisplay[i].SetActive(false);
-                _IsBetActive = false;
-                _StartTimer = true;
-                _Visual_txt.text = "Place The Card........";
-               wages. Final_BetBtn.SetActive(false);
-               wages._Betslider.gameObject.SetActive(false);
-               wages.Bet_btn.SetActive(true);
-            }
-        }
-
-        _PlaceCardList.Clear();
     }
     void _TimerCall() {     
-           // print("false---");
             if (!_StartTimer) {
                 _Timer -= Time.deltaTime;
                 _Visual_txt.text = (int)_Timer + " Seconds Left";
@@ -236,38 +116,183 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
        
     }
     IEnumerator _PlaceCard() {
+        print("aaaa-------");
         for (int i = 0; i < _PlayerList.Count; i++) {
-            yield return new WaitForSeconds(0.1f);
-
-            if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _IsBetActive) {
-
+            yield return new WaitForSeconds(1f);
+            if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
                 if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                    PlayerOutLine[i].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];                  
+                    PlayerOutLine[0].SetActive(false);
+                    _PlacedCardHolder[0].GetComponent<Image>().enabled = true;
+                    _PlacedCardHolder[0].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
                 }
                 else {
-                    PlayerOutLine[i].GetComponent<Image>().sprite = Ready_Card;
+                    PlayerOutLine[1].SetActive(false);
+                    _PlacedCardHolder[1].GetComponent<Image>().enabled = true;
+                    _PlacedCardHolder[1].GetComponent<Image>().sprite = Ready_Card;
+                    _CircletxtDisplay[1].SetActive(false);
                 }
                 if (!_PlaceCardList.Contains(_PlayerList[i])) {
                     _PlaceCardList.Add(_PlayerList[i]);
                 }
-            }
-        }       
+               
+            }          
+        }
+        StartCoroutine("_ResolutionUpdate");
 
-    }  
+    }
+
+    IEnumerator _ResolutionUpdate() {
+        yield return new WaitForSeconds(1f);
+        if (_PlayerList.Count == _PlaceCardList.Count) {
+            for (int i = 0; i < _PlaceCardList.Count; i++) {
+                for (int j = i + 1; j < _PlaceCardList.Count; j++) {                  
+                        if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
+                            _TempBool = true;
+                            _Visual_txt.text = "Same Card........";
+
+                            AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
+                            _TempBool = true;
+                            _Visual_txt.text = "Same Card........";
+
+                            AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
+                            _TempBool = true;
+                            _Visual_txt.text = "Same Card........";
+
+                            AfterBet();
+                        }
+
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
+                            print("Defend beats");
+                            _TempBool = true;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+
+                            _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
+                            _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;
+                            AfterBet();
+
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
+                            print("Defend beats");
+                            _TempBool = true;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
+
+                            _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
+                            _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
+                            AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
+                            print("throw beats");
+                            _TempBool = true;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+
+                        _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;                      
+                         AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
+                            print("throw beats");
+                            _TempBool = true;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
+
+                        _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
+                         AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
+                            print("attack beats");
+                            _TempBool = true;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+
+                        _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
+                        AfterBet();
+                        }
+                        else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
+                            print("attack beats");
+                            _TempBool = true;
+                            _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
+                            _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
+                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "Is Won........";
+
+                        _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;
+                        AfterBet();
+
+                        }
+                    
+                }
+
+            }
+            StartCoroutine("Reset", 2f);
+            print("clear--------");
+        }
+    }
+
     void AfterBet() {
         for (int i = 0; i < _PlayerList.Count; i++) {
-            if (!_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                print("not mine----");
-                PlayerOutLine[i].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
-                _CircletxtDisplay[i].SetActive(true);
-                _PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._opponentBetted.ToString();
-            }
+            if (!_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {            
+                 PlayerOutLine[i].SetActive(false);
+                _PlacedCardHolder[i].GetComponent<Image>().enabled = true;
+                _PlacedCardHolder[i].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
+                 _CircletxtDisplay[i].SetActive(true);
+                 _PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._opponentBetted.ToString();
+                }
             else {
-                print(" mine--5--");
-                _CircletxtDisplay[i].SetActive(true);
-                _PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._CurrentPlayerBet.ToString();
+                //_CircletxtDisplay[i].SetActive(true);
+                //_PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._CurrentPlayerBet.ToString();
             }
         }
+    }
+
+    IEnumerator Reset() {
+        _FinishTurn = true;
+        yield return new WaitForSeconds(2f);
+        for (int i = 0; i < _PlaceCardList.Count; i++) {
+            for (int j = 0; j < _PlaceCardList.Count; j++) {
+                _PlaceCardList[i].GetComponent<PlayerObj>()._PlacedCard = false;
+                _PlaceCardList[i].GetComponent<PlayerObj>().CardId = 99;
+                _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
+                _PlayerList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
+                _PlaceCardList[i].GetComponent<PlayerObj>().canUpdateHealth = true;
+                _TempBool = false;
+                // _PlaceCardList[i].GetComponent<PlayerObj>().enabled = false;
+                PlayerOutLine[i].SetActive(true);
+                PlayerOutLine[i].GetComponent<Image>().sprite = OutlineCard;//sprite
+                _PlacedCardHolder[i].GetComponent<Image>().enabled = false;
+                // _PlacedCardHolder[i].SetActive(false);
+                _CircletxtDisplay[i].SetActive(false);
+                _IsBetActive = false;
+                _StartTimer = true;
+                wages.BetDetails.SetActive(false);
+                if (!_gameFinished) {
+                    wages.Bet_btn.SetActive(true);
+                }
+            }
+        }
+        yield return new WaitForSeconds(1f);
+        _PlaceCardList.Clear();
+        if (!_gameFinished) {
+            _Visual_txt.text = "Next Turn........";
+        }
+        yield return new WaitForSeconds(1.5f);
+        if (!_gameFinished) {
+            _Visual_txt.text = "Place The Card........";
+        }
+
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
@@ -275,13 +300,11 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(_CardCnt);
             stream.SendNext(_IsBetActive);
             stream.SendNext(_TempBool);
-            //stream.SendNext(_Health);
         }
         else if (stream.IsReading) {         
             _CardCnt = (int)stream.ReceiveNext();
             _IsBetActive = (bool)stream.ReceiveNext();
             _TempBool = (bool)stream.ReceiveNext();
-            //_Health = (int)stream.ReceiveNext();
         }
     }
 }
