@@ -2761,7 +2761,7 @@ GameObject:
   - component: {fileID: 825492797}
   m_Layer: 0
   m_Name: Special Manager
-  m_TagString: Untagged
+  m_TagString: Special
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2792,8 +2792,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3737873605afc24438dd68236f2d154c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
-  _SpCard: {fileID: 2036466625}
+  controller: {fileID: 1555197865}
+  SpecialCard: {fileID: 2036466625}
 --- !u!114 &825492797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4712,6 +4712,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e1c8e8ef4a0ec4e8dc94d95aa1d808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeSpecial: 0
+  SPmanager: {fileID: 0}
   pv: {fileID: 0}
   Obj: {fileID: 0}
   wages: {fileID: 0}
@@ -4772,6 +4774,9 @@ MonoBehaviour:
   Fighters:
   - {fileID: 127236274}
   - {fileID: 2055784055}
+  _Maxspecialcount: 2
+  differentSpl: 0
+  assignSpl: 0
 --- !u!114 &1555197866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6130,7 +6135,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 825492796}
-        m_MethodName: Click_specialFun
+        m_MethodName: SpecialCardBtn_click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

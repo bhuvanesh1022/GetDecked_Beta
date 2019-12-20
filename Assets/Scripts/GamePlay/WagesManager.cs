@@ -136,7 +136,6 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
                 else {
                 controller.AvailableToken[i].text = OppRemainBet.ToString();
             }
-            // print("token-------");
 
             //RevealCardAndBet();
         }

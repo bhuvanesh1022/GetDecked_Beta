@@ -9,6 +9,10 @@ using TMPro;
 
 public class Controller : MonoBehaviourPunCallbacks,IPunObservable
 {
+    public enum SpecialClass { WinTies, LifeSteal };
+    public SpecialClass activeSpecial;
+
+    public SpecialManager SPmanager;
     public PhotonView pv;
     public PlayerObj Obj;
     public WagesManager wages;
@@ -57,6 +61,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     [Header("Fighters")]
     public GameObject[] Fighters;
 
+    public int _Maxspecialcount;
+    public bool differentSpl;
+    public bool assignSpl;
+
     public void ReloadApp() {       
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
@@ -67,12 +75,15 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     private void Start() {
+        SPmanager = GameObject.FindGameObjectWithTag("Special").GetComponent<SpecialManager>();
+        wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
         CardVisible.SetActive(false);
         _Visual_txt.text = "Place the bet and card.......";
-        wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
+       
         for (int i = 0; i < _PlayerList.Count; i++) {
             _PlayerList[i].GetComponent<PlayerObj>().currentHealth = _MaxHealth;
         }
+        assignSpl = true;
         }
     private void Update() {
         if (!_TempBool) {
@@ -87,7 +98,27 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 photonView.RPC("GameFinish", RpcTarget.AllBuffered, null);
             }
         }
-               
+        if (assignSpl) {
+            for (int i = 0; i < _PlayerList.Count; i++) {
+                int Rand = Random.Range(0, _Maxspecialcount);
+                _PlayerList[i].GetComponent<PlayerObj>()._AvailableSpecial = Rand;               
+                assignSpl = false;
+            }
+        }       
+        if (_PlayerList[1].GetComponent<PlayerObj>()._AvailableSpecial == _PlayerList[0].GetComponent<PlayerObj>()._AvailableSpecial) {
+            int rand = Random.Range(0, _Maxspecialcount);
+            _PlayerList[1].GetComponent<PlayerObj>()._AvailableSpecial = rand;           
+        }
+        else {
+            differentSpl = true;
+        }
+
+        if (Obj._AvailableSpecial == 0) {
+            SPmanager.SpecialCard.GetComponent<Image>().color = Color.white;
+        }
+        else {
+            SPmanager.SpecialCard.GetComponent<Image>().color = Color.yellow;
+        }
     }
     [PunRPC]
     public void GameFinish() {
@@ -152,27 +183,30 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
 
     IEnumerator _ResolutionUpdate() {
         yield return new WaitForSeconds(1f);
+        activeSpecial = SpecialClass.LifeSteal;
         if (_PlayerList.Count == _PlaceCardList.Count) {
             for (int i = 0; i < _PlaceCardList.Count; i++) {
-                for (int j = i + 1; j < _PlaceCardList.Count; j++) {                  
+                for (int j = i + 1; j < _PlaceCardList.Count; j++) {
+                    
                         if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
                             _TempBool = true;
                             _Visual_txt.text = "Same Card........";
+                        activeSpecial = SpecialClass.WinTies;
+                         AfterBet();                      
 
-                            AfterBet();
-                        }
+                    }
                         else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
                             _TempBool = true;
                             _Visual_txt.text = "Same Card........";
-
-                            AfterBet();
-                        }
+                        activeSpecial = SpecialClass.WinTies;
+                        AfterBet();
+                    }
                         else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
                             _TempBool = true;
                             _Visual_txt.text = "Same Card........";
-
-                            AfterBet();
-                        }
+                        activeSpecial = SpecialClass.WinTies;
+                        AfterBet();
+                    }
 
                         else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
                             print("Defend beats");
@@ -260,9 +294,25 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 }
 
             }
-           
+            CallingSpecial();
             StartCoroutine("Reset", 4f);
            // print("clear--------");
+        }
+    }
+    void CallingSpecial() {
+        for (int a = 0; a < _PlaceCardList.Count; a++) {
+            if (_PlaceCardList[a].GetComponent<PlayerObj>()._SpecialCardActive) {            
+                switch (activeSpecial) {
+                    case SpecialClass.WinTies:
+                        SPmanager.WintiesSpecial();
+                        break;
+                    case SpecialClass.LifeSteal:
+                        SPmanager.LifestealSpecial();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
     void Fighters_ShowFun() {
@@ -351,7 +401,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         else if (stream.IsReading) {         
             _CardCnt = (int)stream.ReceiveNext();
             _IsBetActive = (bool)stream.ReceiveNext();
-            _TempBool = (bool)stream.ReceiveNext();
+            _TempBool = (bool)stream.ReceiveNext();          
         }
     }
 }
