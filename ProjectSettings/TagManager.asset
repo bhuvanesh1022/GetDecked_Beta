@@ -11,7 +11,9 @@ TagManager:
   - Controller
   - Manager
   - Wages
-
+  - PlayerObj
+  - Health
+  - Hcontroll
   layers:
   - Default
   - TransparentFX

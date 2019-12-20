@@ -26,10 +26,9 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     
 
     public void OnBeginDrag(PointerEventData eventData) {
-        if (controller._IsBetActive == true) {
+       if (controller._IsBetActive == true) {
             //controller._CardCnt = int.Parse(this.name.Split('-')[0]);
             controller._CardCnt = Cnt;
-            print("._CardCnt" + Cnt);
             itemBeingDragged = transform;
             canvasGroup = GetComponent<CanvasGroup>();
             canvasGroup.blocksRaycasts = false;
@@ -45,7 +44,7 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     public void OnEndDrag(PointerEventData eventData) {
         print("hellow--yyy-----");
 
-        if (controller._IsBetActive == true) {
+       if (controller._IsBetActive == true) {
 
             canvasGroup.blocksRaycasts = true;
             if (transform.parent == startParent) {
@@ -56,17 +55,15 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
             }
 
             itemBeingDragged = null;
-        }
+       }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
         if (stream.IsWriting) {
             stream.SendNext(Cnt);
-            //stream.SendNext(transform.position);
            }
         else if (stream.IsReading) {
             Cnt = (int)stream.ReceiveNext();
-           // transform.position = (Vector3)stream.ReceiveNext();
         }
     }
 }

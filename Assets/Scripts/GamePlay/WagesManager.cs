@@ -4,59 +4,165 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
-public class WagesManager : MonoBehaviour
+public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
 {
     public Controller controller;
-    public GameObject Bet_btn,Final_Bet;
+    public PlayerObj Obj;
+    public ItemDropHandler Drop;
+
+    public GameObject BetDetails;
+    public GameObject Bet_btn,Final_BetBtn;
     public Slider _Betslider;
-    public int _BetValue,_MaxBetValue=10;
+    public int _MaxBetValue=10;
     public int xMin = 0, xMax=10;
 
     // Health
-    public GameObject _HealthBar,_HealthLoad;
     public GameObject[] _HealthLoader;
-    public int _FinalBet;
-    int SetScale = 1;
+    public int _CurrentPlayerBet;   
     public bool _HealthVal;
-
+    public int _Health;
+    //
+    public int _opponentBetted;
+    public int OppRemainBet;
+    int bet;
+    public TextMeshProUGUI _SliderTxt;
+    public Transform Parent;
+    public bool _TokenBool;
     private void Awake() {
         controller = GameObject.FindGameObjectWithTag("Controller").GetComponent<Controller>();
     }
     void Start()
-    {
-         
+    {         
         _Betslider.GetComponent<Slider>().maxValue = _MaxBetValue;
-        Final_Bet.SetActive(false);
-        _Betslider.gameObject.SetActive(false);
+        BetDetails.SetActive(false);
+        
+    }
+    private void Update() {
+        if (!_TokenBool) {
+            OpponentValues();
+            opponentRemainingBet();
+        }
+        if (!_TokenBool) {
+            for (int i = 0; i < controller._PlayerList.Count; i++) {
+                controller.AvailableToken[i].text = _MaxBetValue.ToString();
+            }
+        }
+        for (int i = 0; i < controller._PlayerList.Count; i++) {
+            if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                //_Betslider.GetComponent<Slider>().value = Obj._RemainingBet;
+                _Betslider.GetComponent<Slider>().value = Mathf.Clamp(_Betslider.GetComponent<Slider>().value, 0, controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet);
+            }
+        }
+        UpdateBet();
+    }
+    public void UpdateBet() 
+    {
+        for (int i = 0; i < controller.AvailableToken.Length; i++) 
+        {
+            if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                controller.AvailableToken[0].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
+            }
+            else {
+                controller.AvailableToken[1].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
+            }
+            
+        }
     }
     //
-    public void _ClickbettedBtn() {
-        _Betslider.gameObject.SetActive(true);
-        Bet_btn.SetActive(false);
-        Final_Bet.SetActive(true);
+    void OpponentValues() {
+        for (int i = 0; i < controller._PlayerList.Count; i++) {
+            if (!controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                _opponentBetted = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet;
+            }
+        }
     }
-    public void _ClickBetSlider() {
-        
-        _BetValue = (int)_Betslider.GetComponent<Slider>().value;
-       
-    }
-    // Final Click bet
-    public void _FinalBetted_Fun() {
+    void opponentRemainingBet() { // remaining bet 
+        for (int i = 0; i < controller._PlayerList.Count; i++) {
+            if (!controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                //if (photonView.IsMine) {
+                OppRemainBet = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet;
+                //}
+            }
 
-        _FinalBet = Mathf.Clamp(_BetValue, xMin, xMax -_BetValue);
 
-        print("_BetValue--"  + _FinalBet);
-        controller._IsBetActive = true;
-        Final_Bet.SetActive(false);
-        _Betslider.gameObject.SetActive(false);
-    }
-
-    // Health Loader
-    public void _HealthLoading() {
-        for (int i=0;i<_HealthLoader.Length;i++) {
-            _HealthLoader[i].SetActive(true);
-           
         }
     }
 
+    //
+    public void _ClickbettedBtn() {
+        BetDetails.SetActive(true);
+        Bet_btn.SetActive(false);
+       
+    }
+    public void _ClickBetSlider() {
+
+        for (int i = 0; i < controller._PlayerList.Count; i++) {
+            if (controller._PlayerList[i].GetComponent<PlayerObj>().photonView.IsMine) {
+                controller._PlayerList[i].GetComponent<PlayerObj>().currentBet = (int)_Betslider.GetComponent<Slider>().value;              
+                 bet = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet;
+                _SliderTxt.transform.parent = Parent; // display slider text
+                _SliderTxt.text = bet.ToString();
+            }
+        }
+    }
+    
+    // Final Click bet
+    public void _FinalBetted_Fun() {
+        controller.CardVisible.SetActive(true);
+        _CurrentPlayerBet = bet;
+       // print("_BetValue-----" + _CurrentPlayerBet);
+        Obj._placedBet = true;
+        controller._IsBetActive = true;
+        BetDetails.SetActive(false);
+        for (int i = 0; i < controller._PlayerList.Count; i++) {
+            if (!controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+
+            }
+            else {          
+                    controller._CircletxtDisplay[0].SetActive(true);
+                    controller._PlaceCardTxt[0].GetComponent<TextMeshProUGUI>().text = _CurrentPlayerBet.ToString();
+                }
+        }
+        _AvailableTokens();
+    }
+    void _AvailableTokens() {
+        _TokenBool = true;
+        for (int i = 0; i < controller._PlayerList.Count; i++) {         
+                if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                    controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet -= _CurrentPlayerBet;
+                controller.AvailableToken[i].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
+            }
+                else {
+                controller.AvailableToken[i].text = OppRemainBet.ToString();
+            }
+            // print("token-------");
+
+            //RevealCardAndBet();
+        }
+
+    }
+
+    //void RevealCardAndBet() {
+    //    for (int i = 0; i < controller._PlayerList.Count; i++) {
+    //        if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+    //            controller._PlaceCardTxt[0].text = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet.ToString();
+    //        }
+    //        else {
+    //            controller._PlaceCardTxt[1].text = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet.ToString();
+    //        }
+    //    }
+    //}
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+        if (stream.IsWriting) {
+            stream.SendNext(_CurrentPlayerBet);
+            stream.SendNext(_Health);
+            stream.SendNext(OppRemainBet);            
+        }
+        else if (stream.IsReading) {
+            _CurrentPlayerBet = (int)stream.ReceiveNext();
+            _Health = (int)stream.ReceiveNext();
+            OppRemainBet = (int)stream.ReceiveNext();
+        }
+    }
 }
