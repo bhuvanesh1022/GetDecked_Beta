@@ -102,6 +102,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b69a37fcad93463c9286abb0a145e76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pv: {fileID: 9071526169203994676}
+  currentHealth: 10
+  maxHealth: 10
+  updateHealth: 0
+  healthBar: {fileID: 0}
 --- !u!114 &-8907533001444470654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7144583d9532e4400b190eea8a62c80b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pv: {fileID: 9071526169203994676}
+  canBet: 1
+  betPlaced: 0
+  placedBet: 0
+  maxBetAvailable: 25
 --- !u!114 &9071526169203994676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,6 +143,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: -1579323957349490800}
+  - {fileID: -8907533001444470654}
+  - {fileID: -4278229782853913660}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -150,6 +162,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pv: {fileID: 9071526169203994676}
   myName: 
+  canPlaceCard: 1
   cardPlaced: 0
   placedCard: -1
   isWon: 0
+  _healthManager: {fileID: -4278229782853913660}
+  _betManager: {fileID: -8907533001444470654}
+  _specialManager: {fileID: 6471548245779629477}
