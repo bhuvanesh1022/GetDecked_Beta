@@ -98,8 +98,8 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
 
         for (int i = 0; i < controller._PlayerList.Count; i++) {
             if (controller._PlayerList[i].GetComponent<PlayerObj>().photonView.IsMine) {
-                controller._PlayerList[i].GetComponent<PlayerObj>().currentBet = (int)_Betslider.GetComponent<Slider>().value;              
-                 bet = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet;
+                bet = (int)_Betslider.GetComponent<Slider>().value;              
+                 //bet = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet;
                 _SliderTxt.transform.parent = Parent; // display slider text
                 _SliderTxt.text = bet.ToString();
             }
@@ -109,7 +109,7 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
     // Final Click bet
     public void _FinalBetted_Fun() {
         controller.CardVisible.SetActive(true);
-        _CurrentPlayerBet = bet;
+        //_CurrentPlayerBet = bet;
        // print("_BetValue-----" + _CurrentPlayerBet);
         Obj._placedBet = true;
         controller._IsBetActive = true;
@@ -120,7 +120,8 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
             }
             else {          
                     controller._CircletxtDisplay[0].SetActive(true);
-                    controller._PlaceCardTxt[0].GetComponent<TextMeshProUGUI>().text = _CurrentPlayerBet.ToString();
+                    controller._PlaceCardTxt[0].GetComponent<TextMeshProUGUI>().text = bet.ToString();
+                    controller._PlayerList[i].GetComponent<PlayerObj>().currentBet = bet;
                 }
         }
         _AvailableTokens();
@@ -129,7 +130,7 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
         _TokenBool = true;
         for (int i = 0; i < controller._PlayerList.Count; i++) {         
                 if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                    controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet -= _CurrentPlayerBet;
+                    controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet -= bet;
                 controller.AvailableToken[i].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
             }
                 else {
