@@ -93,8 +93,9 @@ public class LobbyController : MonoBehaviourPunCallbacks
     public void PlayerNameUpdate(string nameInput)
     {
         PhotonNetwork.NickName = nameInput;
-        DataControl.myName = nameInput;
-        PlayerPrefs.SetString("NickName", nameInput);
+        DataControl.myName = nameInput;      
+       PlayerPrefs.SetString("NickName", nameInput);
+       //PlayerPrefs.SetInt("Myid", DataControl.MyId);
     }
 
     public void PlayerAvatarUpdate(int Id)

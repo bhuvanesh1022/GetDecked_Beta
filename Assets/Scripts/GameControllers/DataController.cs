@@ -6,7 +6,7 @@ public class DataController : MonoBehaviour
 
     public string myName;
     public string myCharacter;
-
+    public int MyId;
     private void Awake()
     {
         if (dataController == null)

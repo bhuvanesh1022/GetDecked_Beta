@@ -37,6 +37,9 @@ MonoBehaviour:
   - CardPlacing
   - PlaceCard
   - PlacingCards
+  - Placecard
+  - Addplayers
+
   - BettingForAll
   - BetForAll
   DisableAutoOpenWizard: 1
