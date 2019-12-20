@@ -21,7 +21,8 @@ public class ItemDropHandler : MonoBehaviourPunCallbacks, IDropHandler,IPunObser
 
     public void OnDrop(PointerEventData eventData) {
         RectTransform rect = transform as RectTransform;
-        if (RectTransformUtility.RectangleContainsScreenPoint(rect, Input.mousePosition))
+        Vector3 offsetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (RectTransformUtility.RectangleContainsScreenPoint(rect, offsetPos))
         {
             _CardDrop = true;
             Obj._PlacedCard = true;

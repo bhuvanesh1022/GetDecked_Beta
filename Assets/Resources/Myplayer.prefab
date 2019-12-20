@@ -105,6 +105,7 @@ MonoBehaviour:
   updateHealth: 0
   canUpdateHealth: 0
   _RemainingBet: 0
+  myFighter: {fileID: 0}
   _SpecialCardActive: 0
 --- !u!114 &5672543887561462819
 MonoBehaviour:

@@ -25,6 +25,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public bool canUpdateHealth;
     //opponent bet
     public int _RemainingBet;
+    public Animator myFighter;
 
     [Header("Special Details")]
     public bool _SpecialCardActive;
@@ -37,6 +38,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         DC = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
         Mg = GameObject.FindGameObjectWithTag("Manager").GetComponent<Manager>();
         Wage = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
+        
         // controller.wages.Obj = this;
     }
     void Start()
@@ -77,18 +79,22 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             if (pv.IsMine) {
                 print("1---------->");
                 transform.parent = controller._PlayerPos[0].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[0];//health
                 _TokenTxt = controller.AvailableToken[0].gameObject;
                 transform.localPosition = Vector3.zero;
+                myFighter = controller.Fighters[0].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];//(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]
                 print(" DC.MyId ----" + (int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]);
             }
             else {
                 print("2---------->");
                 transform.parent = controller._PlayerPos[1].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[1];
                 _TokenTxt = controller.AvailableToken[1].gameObject;
                 transform.localPosition = Vector3.zero;
+                myFighter = controller.Fighters[1].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];
                 print(" DC.MyId ----" + (int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]);
             }

@@ -54,6 +54,8 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     int SpecialInt;
     public bool _gameFinished;
     public bool resetBet;
+    [Header("Fighters")]
+    public GameObject[] Fighters;
 
     public void ReloadApp() {       
         PhotonNetwork.Disconnect();
@@ -124,7 +126,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     IEnumerator _PlaceCard() {
        // print("aaaa-------");
         for (int i = 0; i < _PlayerList.Count; i++) {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             CardVisible.SetActive(false);
             if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
                 if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
@@ -179,7 +181,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
 
-                            _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character spear");
+                        _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
                             _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;
                             AfterBet();
 
@@ -190,8 +195,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
-
-                            _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");                       
+                        _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
                             _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
                             AfterBet();
                         }
@@ -201,7 +208,9 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
-
+                        _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character spear");
                         _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
                         _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;                      
                          AfterBet();
@@ -212,7 +221,9 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
-
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");
                         _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
                         _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
                          AfterBet();
@@ -223,7 +234,9 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "  Is Won........";
-
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");
                         _PlaceCardList[j].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[i].GetComponent<PlayerObj>().currentBet + 1;
                         _PlaceCardList[j].GetComponent<PlayerObj>().updateHealth = true;
                         AfterBet();
@@ -234,6 +247,9 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "Is Won........";
+                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        yield return new WaitForSeconds(0.2f);
+                        _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character spear");
 
                         _PlaceCardList[i].GetComponent<PlayerObj>().Wage._Health = _PlaceCardList[j].GetComponent<PlayerObj>().currentBet + 1;
                         _PlaceCardList[i].GetComponent<PlayerObj>().updateHealth = true;
@@ -244,8 +260,15 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 }
 
             }
-            StartCoroutine("Reset", 2f);
-            print("clear--------");
+           
+            StartCoroutine("Reset", 4f);
+           // print("clear--------");
+        }
+    }
+    void Fighters_ShowFun() {
+        print("show fun----");
+        for (int i = 0; i < Fighters.Length; i++) {
+            Fighters[i].SetActive(true);
         }
     }
 
@@ -264,6 +287,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
 
     IEnumerator Reset() {
         _FinishTurn = true;
+        //for (int i = 0; i < Fighters.Length; i++) {
+        //    Fighters[i].SetActive(false);
+        //    Fighters[i].GetComponentInChildren<Animator>().Play("Character one idle");
+        //}
         yield return new WaitForSeconds(2f);
         for (int i = 0; i < _PlaceCardList.Count; i++) {
             for (int j = 0; j < _PlaceCardList.Count; j++) {
@@ -272,8 +299,8 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                 _PlayerList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                 _PlaceCardList[i].GetComponent<PlayerObj>().canUpdateHealth = true;
+                _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one idle");
                 _TempBool = false;
-                // _PlaceCardList[i].GetComponent<PlayerObj>().enabled = false;
                 PlayerOutLine[i].SetActive(true);
                 PlayerOutLine[i].GetComponent<Image>().sprite = OutlineCard;//sprite
                 _PlacedCardHolder[i].GetComponent<Image>().enabled = false;
