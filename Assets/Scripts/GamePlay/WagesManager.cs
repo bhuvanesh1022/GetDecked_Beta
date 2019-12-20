@@ -104,12 +104,13 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
                 _SliderTxt.text = bet.ToString();
             }
         }
-    }   
+    }
+    
     // Final Click bet
     public void _FinalBetted_Fun() {
         controller.CardVisible.SetActive(true);
         _CurrentPlayerBet = bet;
-        print("_BetValue-----" + _CurrentPlayerBet);
+       // print("_BetValue-----" + _CurrentPlayerBet);
         Obj._placedBet = true;
         controller._IsBetActive = true;
         BetDetails.SetActive(false);
@@ -128,18 +129,29 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
         _TokenBool = true;
         for (int i = 0; i < controller._PlayerList.Count; i++) {         
                 if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                    controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet = _MaxBetValue - _CurrentPlayerBet;
-                    controller.AvailableToken[i].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
-                }
+                    controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet -= _CurrentPlayerBet;
+                controller.AvailableToken[i].text = controller._PlayerList[i].GetComponent<PlayerObj>()._RemainingBet.ToString();
+            }
                 else {
-                     controller.AvailableToken[i].text = OppRemainBet.ToString();
+                controller.AvailableToken[i].text = OppRemainBet.ToString();
+            }
+            // print("token-------");
 
-                }
-            print("token-------");
-
+            //RevealCardAndBet();
         }
 
     }
+
+    //void RevealCardAndBet() {
+    //    for (int i = 0; i < controller._PlayerList.Count; i++) {
+    //        if (controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+    //            controller._PlaceCardTxt[0].text = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet.ToString();
+    //        }
+    //        else {
+    //            controller._PlaceCardTxt[1].text = controller._PlayerList[i].GetComponent<PlayerObj>().currentBet.ToString();
+    //        }
+    //    }
+    //}
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
         if (stream.IsWriting) {

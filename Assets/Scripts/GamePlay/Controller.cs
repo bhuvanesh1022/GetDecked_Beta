@@ -53,6 +53,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public GameObject[] _specialIcons;
     int SpecialInt;
     public bool _gameFinished;
+    public bool resetBet;
 
     public void ReloadApp() {       
         PhotonNetwork.Disconnect();
@@ -80,16 +81,17 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
             _PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount = _PlayerList[i].GetComponent<PlayerObj>().currentHealth / _MaxHealth;
         }
        StartCoroutine("FinishGame");
-
+        
     }
     IEnumerator FinishGame() {
         yield return new WaitForSeconds(2f);
         for (int i = 0; i < _PlayerList.Count; i++) {
             if (_PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount <= 0 && !_gameFinished) {
-                print("fill------");
+                //print("fill------");
                 _gameFinished = true;
                 wages.Bet_btn.SetActive(false);
                 _Visual_txt.text = " Game Finished !!!";
+                CardVisible.SetActive(false);
             }
         }
     }
@@ -116,9 +118,10 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
        
     }
     IEnumerator _PlaceCard() {
-        print("aaaa-------");
+       // print("aaaa-------");
         for (int i = 0; i < _PlayerList.Count; i++) {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
+            CardVisible.SetActive(false);
             if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
                 if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
                     PlayerOutLine[0].SetActive(false);
@@ -249,8 +252,8 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 _PlacedCardHolder[i].GetComponent<Image>().enabled = true;
                 _PlacedCardHolder[i].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
                  _CircletxtDisplay[i].SetActive(true);
-                 _PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._opponentBetted.ToString();
-                }
+               _PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = _PlayerList[i].GetComponent<PlayerObj>().currentBet.ToString();
+            }
             else {
                 //_CircletxtDisplay[i].SetActive(true);
                 //_PlaceCardTxt[i].GetComponent<TextMeshProUGUI>().text = wages._CurrentPlayerBet.ToString();
@@ -277,21 +280,39 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 _CircletxtDisplay[i].SetActive(false);
                 _IsBetActive = false;
                 _StartTimer = true;
-                wages.BetDetails.SetActive(false);
-                if (!_gameFinished) {
-                    wages.Bet_btn.SetActive(true);
-                }
+                wages.BetDetails.SetActive(false);             
             }
         }
+
+      //  resetBet = _PlayerList[0].GetComponent<PlayerObj>()._RemainingBet <= 0 && _PlayerList[1].GetComponent<PlayerObj>()._RemainingBet <= 0;
+       // Debug.Log(resetBet);
+
         yield return new WaitForSeconds(1f);
         _PlaceCardList.Clear();
         if (!_gameFinished) {
             _Visual_txt.text = "Next Turn........";
         }
+
         yield return new WaitForSeconds(1.5f);
         if (!_gameFinished) {
-            _Visual_txt.text = "Place The Card........";
+            wages.Bet_btn.SetActive(true);
+            _TempBool = false;
+            _StartTimer = false;
+            _Timer = 30;
         }
+
+        if (!_gameFinished) {
+            _Visual_txt.text = "Place The Card........";          
+        }
+
+        //for (int i = 0; i < _PlayerList.Count; i++) 
+        //{
+        //    if (resetBet) 
+        //    {
+        //        print("Full health--------");
+        //        _PlayerList[i].GetComponent<PlayerObj>()._RemainingBet = wages._MaxBetValue;
+        //    }   
+        //}
 
     }
 
