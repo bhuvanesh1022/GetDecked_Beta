@@ -39,6 +39,8 @@ MonoBehaviour:
   - PlacingCards
   - Placecard
   - Addplayers
+  - BettingForAll
+  - BetForAll
   - AddHealthBar
   - AssigningBet
   - AfterBet
