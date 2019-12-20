@@ -7,15 +7,16 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 public class ItemDropHandler : MonoBehaviourPunCallbacks, IDropHandler,IPunObservable {
+
     public Controller controller;
     public WagesManager wages;
     public PlayerObj Obj;
     public ItemDragHandler card;
     public bool _CardDrop;
+
     private void Awake() {
         controller = FindObjectOfType<Controller>();
         wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
-
     }
 
     public void OnDrop(PointerEventData eventData) {
@@ -29,7 +30,7 @@ public class ItemDropHandler : MonoBehaviourPunCallbacks, IDropHandler,IPunObser
             Obj.CardId = card.Cnt;
 
             // ItemDragHandler.itemBeingDragged.transform.gameObject.SetActive(false);
-            controller._CardPlacing();
+            controller._CardPlacing();// first
         }
     }
    

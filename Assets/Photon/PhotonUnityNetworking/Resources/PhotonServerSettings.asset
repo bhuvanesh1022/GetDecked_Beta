@@ -43,5 +43,8 @@ MonoBehaviour:
   - AssigningBet
   - AfterBet
   - WaitCall
+  - PlacedCard
+  - PlacedCardfun
+  - AddSpecialCard
   DisableAutoOpenWizard: 1
   ShowSettings: 1

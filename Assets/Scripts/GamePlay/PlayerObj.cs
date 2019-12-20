@@ -11,7 +11,6 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public DataController DC;
     public WagesManager Wage;
 
-    public int PLId;
     public PhotonView pv;
     public string avatarName;
     public GameObject healthbar;
@@ -21,9 +20,14 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public bool _PlacedCard, _placedBet;
     public int CardId;
     public bool _IsplayerWin,_IsSameCard;
-
+    public float currentHealth;
+    public bool updateHealth;
+    public bool canUpdateHealth;
     //opponent bet
     public int _RemainingBet;
+
+    [Header("Special Details")]
+    public bool _SpecialCardActive;
 
     private void Awake() {
         controller = GameObject.FindGameObjectWithTag("Controller").GetComponent<Controller>();
@@ -32,20 +36,29 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         }
         DC = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
         Mg = GameObject.FindGameObjectWithTag("Manager").GetComponent<Manager>();
-        //controller.wages.Obj = this;
+        Wage = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
+        // controller.wages.Obj = this;
     }
     void Start()
     {
-        //PLId = DC.MyId;
+        canUpdateHealth = true;
+        _RemainingBet = Wage._MaxBetValue;
         _PlayerPosition();
         _PlayerDetails();
         photonView.RPC("Addplayers",RpcTarget.AllBuffered,null);
     }
 
     public void Update() {
-        
+        if (updateHealth && canUpdateHealth) {
+            currentHealth -= Wage._Health;
+            //healthbar.GetComponent<Image>().fillAmount = currentHealth / controller._MaxHealth;
+            print("show val"+ healthbar.GetComponent<Image>().fillAmount+ currentHealth);
+            canUpdateHealth = false;
+            updateHealth = false;
+        }
+       
     }
-
+   
     void _PlayerDetails() {
         if (pv.IsMine) {
             avatarName = pv.Owner.NickName;
@@ -100,7 +113,10 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(_IsplayerWin);
             stream.SendNext(_IsSameCard);
             stream.SendNext(currentBet);
-            stream.SendNext(_RemainingBet);            
+            stream.SendNext(_RemainingBet);
+            stream.SendNext(currentHealth);
+            stream.SendNext(updateHealth);
+            stream.SendNext(canUpdateHealth);
         }
         else if (stream.IsReading) {
             _PlacedCard = (bool)stream.ReceiveNext();
@@ -110,6 +126,9 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             _IsSameCard = (bool)stream.ReceiveNext();
             currentBet = (int)stream.ReceiveNext();
             _RemainingBet = (int)stream.ReceiveNext();
+            currentHealth = (float)stream.ReceiveNext();
+            updateHealth = (bool)stream.ReceiveNext();
+            canUpdateHealth = (bool)stream.ReceiveNext();
         }
     }
 }
