@@ -95,6 +95,7 @@ MonoBehaviour:
   avatarName: 
   healthbar: {fileID: 0}
   _TokenTxt: {fileID: 0}
+  _HealthTxt: {fileID: 0}
   currentBet: 2
   _PlacedCard: 0
   _placedBet: 1

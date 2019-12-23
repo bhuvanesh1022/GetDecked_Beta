@@ -23,7 +23,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     [Header("5")]
     public List<GameObject> _PlayerList = new List<GameObject>();
     public List<GameObject> _PlaceCardList = new List<GameObject>();
-   
+    public List<Sprite> _SpecialList = new List<Sprite>();
     //Timer
     public TextMeshProUGUI _Visual_txt;
     public float _Timer=30;
@@ -52,6 +52,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public int _OpponentBetted;
     public GameObject[] HealthLoader;
     public TextMeshProUGUI[] AvailableToken;
+    public TextMeshProUGUI[] HealthBarText;
 
     [Header("Special details")]
     public GameObject[] _specialIcons;
@@ -64,6 +65,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public int _Maxspecialcount;
     public bool differentSpl;
     public bool assignSpl;
+     
 
     public void ReloadApp() {       
         PhotonNetwork.Disconnect();
@@ -86,15 +88,17 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         assignSpl = true;
         }
     private void Update() {
-        if (!_TempBool) {
-            _TimerCall();
-        }
+        //if (!_TempBool) {
+        //    _TimerCall();
+        //}
 
         for (int i = 0; i < _PlayerList.Count; i++) {
             _PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount = _PlayerList[i].GetComponent<PlayerObj>().currentHealth / _MaxHealth;
+            _PlayerList[i].GetComponent<PlayerObj>()._HealthTxt.GetComponent<TextMeshProUGUI>().text = _PlayerList[i].GetComponent<PlayerObj>().currentHealth.ToString();
         }
         for (int i = 0; i < _PlayerList.Count; i++) {
             if (_PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount <= 0 && !_gameFinished) {
+                print("player name"+ _PlayerList[i].GetComponent<PlayerObj>().avatarName);
                 photonView.RPC("GameFinish", RpcTarget.AllBuffered, null);
             }
         }
@@ -110,15 +114,28 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
             _PlayerList[1].GetComponent<PlayerObj>()._AvailableSpecial = rand;           
         }
         else {
-            differentSpl = true;
+            SPmanager.SpecialCard.GetComponent<Image>().sprite = _SpecialList[Obj._AvailableSpecial];
+            //if (!differentSpl) {
+            //    for (int i = 0; i < _PlayerList.Count; i++) {
+            //        if (Obj.pv.IsMine) {
+            //            if (_PlayerList[i].GetComponent<PlayerObj>()._AvailableSpecial == 0) {
+            //                SPmanager.SpecialCard.GetComponent<Image>().color = Color.white;
+            //                SPmanager.SpecialCard.GetComponentInChildren<TextMeshProUGUI>().text = "Win Ties";
+            //                print("special--------------" + Obj._AvailableSpecial);
+
+            //            }
+            //            else {
+            //                SPmanager.SpecialCard.GetComponent<Image>().color = Color.yellow;
+            //                SPmanager.SpecialCard.GetComponentInChildren<TextMeshProUGUI>().text = "Life Steal";
+            //                print("else-------yy-------" + Obj._AvailableSpecial);
+            //            }
+            //            differentSpl = true;
+
+            //        }
+            //    }                
+            //}
         }
 
-        if (Obj._AvailableSpecial == 0) {
-            SPmanager.SpecialCard.GetComponent<Image>().color = Color.white;
-        }
-        else {
-            SPmanager.SpecialCard.GetComponent<Image>().color = Color.yellow;
-        }
     }
     [PunRPC]
     public void GameFinish() {
@@ -132,18 +149,20 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         _Visual_txt.text = " Game Finished !!!";
         CardVisible.SetActive(false);
     }
-    void _TimerCall() {     
-            if (!_StartTimer) {
-                _Timer -= Time.deltaTime;
-                _Visual_txt.text = (int)_Timer + " Seconds Left";
-                if (_Timer <= 0) {
-                    print("--" + _Timer);
-                    _StartTimer = true;
-                    _Visual_txt.text = "Time Up";
-                }
+    //void _TimerCall() {     
+    //        if (!_StartTimer) {
+    //            _Timer -= Time.deltaTime;
+    //            _Visual_txt.text = (int)_Timer + " Seconds Left";
+    //            if (_Timer <= 0) {
+    //                print("--" + _Timer);
+    //                _StartTimer = true;
+    //                _Visual_txt.text = "Time Up";
+    //            StartCoroutine("Reset", 2f);
+    //        }
 
-            }     
-    }
+    //        }     
+    //}
+
     //card Placing
     public void _CardPlacing() {
         photonView.RPC("Placecard", RpcTarget.AllBuffered, null);
@@ -158,7 +177,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
        // print("aaaa-------");
         for (int i = 0; i < _PlayerList.Count; i++) {
             yield return new WaitForSeconds(0.2f);
-            CardVisible.SetActive(false);
+           // CardVisible.SetActive(false);
             if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
                 if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
                     PlayerOutLine[0].SetActive(false);
@@ -185,6 +204,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         yield return new WaitForSeconds(1f);
         activeSpecial = SpecialClass.LifeSteal;
         if (_PlayerList.Count == _PlaceCardList.Count) {
+            CardVisible.SetActive(false);
             for (int i = 0; i < _PlaceCardList.Count; i++) {
                 for (int j = i + 1; j < _PlaceCardList.Count; j++) {
                     
@@ -343,7 +363,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         //}
         yield return new WaitForSeconds(2f);
         for (int i = 0; i < _PlaceCardList.Count; i++) {
-            for (int j = 0; j < _PlaceCardList.Count; j++) {
+            //for (int j = 0; j < _PlaceCardList.Count; j++) {
                 _PlaceCardList[i].GetComponent<PlayerObj>()._PlacedCard = false;
                 _PlaceCardList[i].GetComponent<PlayerObj>().CardId = 99;
                 _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
@@ -354,12 +374,12 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 PlayerOutLine[i].SetActive(true);
                 PlayerOutLine[i].GetComponent<Image>().sprite = OutlineCard;//sprite
                 _PlacedCardHolder[i].GetComponent<Image>().enabled = false;
-                // _PlacedCardHolder[i].SetActive(false);
                 _CircletxtDisplay[i].SetActive(false);
                 _IsBetActive = false;
-                _StartTimer = true;
-                wages.BetDetails.SetActive(false);             
-            }
+               // _StartTimer = true;
+                wages.BetDetails.SetActive(false);
+                _PlaceCardList[i].GetComponent<PlayerObj>()._SpecialCardActive = false;
+            //}
         }
 
         resetBet = _PlayerList[0].GetComponent<PlayerObj>()._RemainingBet <= 0 && _PlayerList[1].GetComponent<PlayerObj>()._RemainingBet <= 0;
@@ -375,8 +395,8 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         if (!_gameFinished) {
             wages.Bet_btn.SetActive(true);
             _TempBool = false;
-            _StartTimer = false;
-            _Timer = 30;
+           // _StartTimer = false;
+           // _Timer = 30;
         }
 
         if (!_gameFinished) {
@@ -384,7 +404,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         }
 
         for (int i = 0; i < _PlayerList.Count; i++) {
-            if (resetBet) {
+            if (resetBet && !_gameFinished) {
                 print("Full health--------");
                 _PlayerList[i].GetComponent<PlayerObj>()._RemainingBet = wages._MaxBetValue;
             }
