@@ -37,7 +37,8 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
 
     public void OnDrag(PointerEventData eventData) {
         if (controller._IsBetActive == true) {
-            transform.position = Input.mousePosition;
+            Vector3 offsetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = new Vector3(offsetPos.x, offsetPos.y, 0);
         }
     }
 

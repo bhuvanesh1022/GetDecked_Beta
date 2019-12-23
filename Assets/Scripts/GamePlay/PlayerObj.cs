@@ -25,9 +25,11 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public bool canUpdateHealth;
     //opponent bet
     public int _RemainingBet;
+    public Animator myFighter;
 
     [Header("Special Details")]
     public bool _SpecialCardActive;
+    public int _AvailableSpecial;
 
     private void Awake() {
         controller = GameObject.FindGameObjectWithTag("Controller").GetComponent<Controller>();
@@ -37,6 +39,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         DC = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
         Mg = GameObject.FindGameObjectWithTag("Manager").GetComponent<Manager>();
         Wage = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
+        
         // controller.wages.Obj = this;
     }
     void Start()
@@ -73,22 +76,27 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         }
         }
     void _PlayerPosition() {
+        
         for (int i = 0; i < controller._PlayerPos.Length; i++) {
             if (pv.IsMine) {
-                print("1---------->");
+                print("1---------->");               
                 transform.parent = controller._PlayerPos[0].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[0];//health
                 _TokenTxt = controller.AvailableToken[0].gameObject;
                 transform.localPosition = Vector3.zero;
+                myFighter = controller.Fighters[0].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];//(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]
                 print(" DC.MyId ----" + (int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]);
             }
             else {
                 print("2---------->");
                 transform.parent = controller._PlayerPos[1].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[1];
                 _TokenTxt = controller.AvailableToken[1].gameObject;
                 transform.localPosition = Vector3.zero;
+                myFighter = controller.Fighters[1].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];
                 print(" DC.MyId ----" + (int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]);
             }
@@ -117,6 +125,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(currentHealth);
             stream.SendNext(updateHealth);
             stream.SendNext(canUpdateHealth);
+            stream.SendNext(_SpecialCardActive);
         }
         else if (stream.IsReading) {
             _PlacedCard = (bool)stream.ReceiveNext();
@@ -129,6 +138,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             currentHealth = (float)stream.ReceiveNext();
             updateHealth = (bool)stream.ReceiveNext();
             canUpdateHealth = (bool)stream.ReceiveNext();
+            _SpecialCardActive = (bool)stream.ReceiveNext();
         }
     }
 }

@@ -48,5 +48,6 @@ MonoBehaviour:
   - PlacedCard
   - PlacedCardfun
   - AddSpecialCard
+  - GameFinish
   DisableAutoOpenWizard: 1
   ShowSettings: 1

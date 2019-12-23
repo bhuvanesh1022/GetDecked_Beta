@@ -14,6 +14,7 @@ TagManager:
   - PlayerObj
   - Health
   - Hcontroll
+  - Special
   layers:
   - Default
   - TransparentFX
