@@ -15,6 +15,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public string avatarName;
     public GameObject healthbar;
     public GameObject _TokenTxt;
+    public TextMeshProUGUI _HealthTxt;
     public int currentBet;
     //
     public bool _PlacedCard, _placedBet;
@@ -54,10 +55,11 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
     public void Update() {
         if (updateHealth && canUpdateHealth) {
             currentHealth -= Wage._Health;
+            currentHealth = Mathf.Clamp(currentHealth,0,controller._MaxHealth);
             //healthbar.GetComponent<Image>().fillAmount = currentHealth / controller._MaxHealth;
-            print("show val"+ healthbar.GetComponent<Image>().fillAmount+ currentHealth);
+            print("show val"+ healthbar.GetComponent<Image>().fillAmount+ currentHealth);          
             canUpdateHealth = false;
-            updateHealth = false;
+            updateHealth = false;           
         }
        
     }
@@ -80,10 +82,12 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         for (int i = 0; i < controller._PlayerPos.Length; i++) {
             if (pv.IsMine) {
                 print("1---------->");               
-                transform.parent = controller._PlayerPos[0].transform;
-                GetComponent<Transform>().localScale = Vector3.one;
+               // transform.parent = controller._PlayerPos[0].transform;
+               // GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[0];//health
                 _TokenTxt = controller.AvailableToken[0].gameObject;
+                _HealthTxt = controller.HealthBarText[0];
+
                 transform.localPosition = Vector3.zero;
                 myFighter = controller.Fighters[0].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];//(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]
@@ -91,10 +95,12 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             }
             else {
                 print("2---------->");
-                transform.parent = controller._PlayerPos[1].transform;
-                GetComponent<Transform>().localScale = Vector3.one;
+                //transform.parent = controller._PlayerPos[1].transform;
+               // GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[1];
                 _TokenTxt = controller.AvailableToken[1].gameObject;
+                _HealthTxt = controller.HealthBarText[1];
+
                 transform.localPosition = Vector3.zero;
                 myFighter = controller.Fighters[1].GetComponentInChildren<Animator>();
                 transform.GetComponent<Image>().sprite = controller._PlayerSprite[(int)PhotonNetwork.LocalPlayer.CustomProperties["Avatar"]];
@@ -126,6 +132,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(updateHealth);
             stream.SendNext(canUpdateHealth);
             stream.SendNext(_SpecialCardActive);
+            stream.SendNext(_AvailableSpecial);
         }
         else if (stream.IsReading) {
             _PlacedCard = (bool)stream.ReceiveNext();
@@ -139,6 +146,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             updateHealth = (bool)stream.ReceiveNext();
             canUpdateHealth = (bool)stream.ReceiveNext();
             _SpecialCardActive = (bool)stream.ReceiveNext();
+            _AvailableSpecial = (int)stream.ReceiveNext();
         }
     }
 }

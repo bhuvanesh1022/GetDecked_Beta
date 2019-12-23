@@ -44,6 +44,7 @@ public class SpecialManager : MonoBehaviourPunCallbacks
     // 
     public void SpecialCardBtn_click() {
         controller.Obj._SpecialCardActive = true;
+        SpecialCard.SetActive(false);
        // controller.Obj.GetComponent<CanvasGroup>().interactable = false;
         print("-------special");
     }
