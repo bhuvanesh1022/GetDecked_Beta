@@ -57,7 +57,7 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             currentHealth -= Wage._Health;
             currentHealth = Mathf.Clamp(currentHealth,0,controller._MaxHealth);
             //healthbar.GetComponent<Image>().fillAmount = currentHealth / controller._MaxHealth;
-            print("show val"+ healthbar.GetComponent<Image>().fillAmount+ currentHealth);          
+            print("show val"+ healthbar.GetComponent<Image>().fillAmount + currentHealth);          
             canUpdateHealth = false;
             updateHealth = false;           
         }
@@ -82,8 +82,8 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
         for (int i = 0; i < controller._PlayerPos.Length; i++) {
             if (pv.IsMine) {
                 print("1---------->");               
-               // transform.parent = controller._PlayerPos[0].transform;
-               // GetComponent<Transform>().localScale = Vector3.one;
+                transform.parent = controller._PlayerPos[0].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[0];//health
                 _TokenTxt = controller.AvailableToken[0].gameObject;
                 _HealthTxt = controller.HealthBarText[0];
@@ -95,8 +95,8 @@ public class PlayerObj : MonoBehaviourPunCallbacks,IPunObservable
             }
             else {
                 print("2---------->");
-                //transform.parent = controller._PlayerPos[1].transform;
-               // GetComponent<Transform>().localScale = Vector3.one;
+                transform.parent = controller._PlayerPos[1].transform;
+                GetComponent<Transform>().localScale = Vector3.one;
                 healthbar = controller.HealthLoader[1];
                 _TokenTxt = controller.AvailableToken[1].gameObject;
                 _HealthTxt = controller.HealthBarText[1];

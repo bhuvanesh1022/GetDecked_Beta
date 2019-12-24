@@ -65,6 +65,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public int _Maxspecialcount;
     public bool differentSpl;
     public bool assignSpl;
+    public bool _ResolutionVal;
      
 
     public void ReloadApp() {       
@@ -92,6 +93,12 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         //    _TimerCall();
         //}
 
+        if (_ResolutionVal) {
+            _ResolutionVal = false;
+            print("rpc call------");
+            StartCoroutine("_ResolutionUpdate");
+        }
+
         for (int i = 0; i < _PlayerList.Count; i++) {
             _PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount = _PlayerList[i].GetComponent<PlayerObj>().currentHealth / _MaxHealth;
             _PlayerList[i].GetComponent<PlayerObj>()._HealthTxt.GetComponent<TextMeshProUGUI>().text = _PlayerList[i].GetComponent<PlayerObj>().currentHealth.ToString();
@@ -114,37 +121,18 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
             _PlayerList[1].GetComponent<PlayerObj>()._AvailableSpecial = rand;           
         }
         else {
-            SPmanager.SpecialCard.GetComponent<Image>().sprite = _SpecialList[Obj._AvailableSpecial];
-            //if (!differentSpl) {
-            //    for (int i = 0; i < _PlayerList.Count; i++) {
-            //        if (Obj.pv.IsMine) {
-            //            if (_PlayerList[i].GetComponent<PlayerObj>()._AvailableSpecial == 0) {
-            //                SPmanager.SpecialCard.GetComponent<Image>().color = Color.white;
-            //                SPmanager.SpecialCard.GetComponentInChildren<TextMeshProUGUI>().text = "Win Ties";
-            //                print("special--------------" + Obj._AvailableSpecial);
-
-            //            }
-            //            else {
-            //                SPmanager.SpecialCard.GetComponent<Image>().color = Color.yellow;
-            //                SPmanager.SpecialCard.GetComponentInChildren<TextMeshProUGUI>().text = "Life Steal";
-            //                print("else-------yy-------" + Obj._AvailableSpecial);
-            //            }
-            //            differentSpl = true;
-
-            //        }
-            //    }                
-            //}
+            SPmanager.SpecialCard.GetComponent<Image>().sprite = _SpecialList[Obj._AvailableSpecial];          
         }
 
     }
     [PunRPC]
     public void GameFinish() {
+        _gameFinished = true;
         StartCoroutine("FinishGame");
     }
 
     IEnumerator FinishGame() {
         yield return new WaitForSeconds(2f);
-        _gameFinished = true;
         wages.Bet_btn.SetActive(false);
         _Visual_txt.text = " Game Finished !!!";
         CardVisible.SetActive(false);
@@ -174,33 +162,76 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
        
     }
     IEnumerator _PlaceCard() {
-       // print("aaaa-------");
-        for (int i = 0; i < _PlayerList.Count; i++) {
-            yield return new WaitForSeconds(0.2f);
-           // CardVisible.SetActive(false);
-            if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
-                if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
-                    PlayerOutLine[0].SetActive(false);
-                    _PlacedCardHolder[0].GetComponent<Image>().enabled = true;
-                    _PlacedCardHolder[0].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
-                }
-                else {
-                    PlayerOutLine[1].SetActive(false);
-                    _PlacedCardHolder[1].GetComponent<Image>().enabled = true;
-                    _PlacedCardHolder[1].GetComponent<Image>().sprite = Ready_Card;
-                    _CircletxtDisplay[1].SetActive(false);
-                }
-                if (!_PlaceCardList.Contains(_PlayerList[i])) {
-                    _PlaceCardList.Add(_PlayerList[i]);
-                }
-               
-            }          
+        //for (int i = 0; i < _PlayerList.Count; i++) {
+        //    yield return new WaitForSeconds(0.2f);
+        //    if (_PlayerList[i].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[i].GetComponent<PlayerObj>()._placedBet) {
+        //        if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+        //            PlayerOutLine[0].SetActive(false);
+        //            _PlacedCardHolder[0].GetComponent<Image>().enabled = true;
+        //            _PlacedCardHolder[0].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[i].GetComponent<PlayerObj>().CardId];
+        //        }
+        //        else {
+        //            PlayerOutLine[1].SetActive(false);
+        //            _PlacedCardHolder[1].GetComponent<Image>().enabled = true;
+        //            _PlacedCardHolder[1].GetComponent<Image>().sprite = Ready_Card;
+        //            _CircletxtDisplay[1].SetActive(false);
+        //        }
+
+        //        if (!_PlaceCardList.Contains(_PlayerList[i])) {
+        //            _PlaceCardList.Add(_PlayerList[i]);
+        //        }
+
+        //    }
+        //}
+
+        yield return new WaitForSeconds(0.2f);
+        if (_PlayerList[0].GetComponent<PlayerObj>().pv.IsMine) {
+            if (_PlayerList[0].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[0].GetComponent<PlayerObj>()._placedBet) {
+                PlayerOutLine[0].SetActive(false);
+                 _PlacedCardHolder[0].GetComponent<Image>().enabled = true;
+                 _PlacedCardHolder[0].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[0].GetComponent<PlayerObj>().CardId];
+            }
         }
-        StartCoroutine("_ResolutionUpdate");
+       else {
+            if (_PlayerList[0].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[0].GetComponent<PlayerObj>()._placedBet) {
+                PlayerOutLine[1].SetActive(false);
+                _PlacedCardHolder[1].GetComponent<Image>().enabled = true;
+                _PlacedCardHolder[1].GetComponent<Image>().sprite = Ready_Card;
+                _CircletxtDisplay[1].SetActive(false);
+            }
+        }
+
+        if (_PlayerList[1].GetComponent<PlayerObj>().pv.IsMine) {
+            if (_PlayerList[1].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[1].GetComponent<PlayerObj>()._placedBet) {
+                PlayerOutLine[0].SetActive(false);
+                _PlacedCardHolder[0].GetComponent<Image>().enabled = true;
+                _PlacedCardHolder[0].GetComponent<Image>().sprite = _PlaceCardSprite[_PlayerList[1].GetComponent<PlayerObj>().CardId];
+            }
+        }
+        else {
+            if (_PlayerList[1].GetComponent<PlayerObj>()._PlacedCard && _PlayerList[1].GetComponent<PlayerObj>()._placedBet) {
+                PlayerOutLine[1].SetActive(false);
+                _PlacedCardHolder[1].GetComponent<Image>().enabled = true;
+                _PlacedCardHolder[1].GetComponent<Image>().sprite = Ready_Card;
+                _CircletxtDisplay[1].SetActive(false);
+            }
+        }
+
+        for (int i = 0; i < _PlayerList.Count; i++) {
+            if (!_PlaceCardList.Contains(_PlayerList[i]) && _PlayerList[i].GetComponent<PlayerObj>()._PlacedCard) {
+            _PlaceCardList.Add(_PlayerList[i]);
+            }
+         }
+        if (_PlayerList.Count == _PlaceCardList.Count) {
+            _ResolutionVal = true;
+        }
+            
+        //StartCoroutine("_ResolutionUpdate");
 
     }
 
     IEnumerator _ResolutionUpdate() {
+        _ResolutionVal = false;
         yield return new WaitForSeconds(1f);
         activeSpecial = SpecialClass.LifeSteal;
         if (_PlayerList.Count == _PlaceCardList.Count) {
@@ -381,7 +412,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                 _PlaceCardList[i].GetComponent<PlayerObj>()._SpecialCardActive = false;
             //}
         }
-
+        wages.EnableImg.raycastTarget = false;
         resetBet = _PlayerList[0].GetComponent<PlayerObj>()._RemainingBet <= 0 && _PlayerList[1].GetComponent<PlayerObj>()._RemainingBet <= 0;
         Debug.Log(resetBet);
 
