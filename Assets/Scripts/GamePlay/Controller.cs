@@ -12,6 +12,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public enum SpecialClass { WinTies, LifeSteal };
     public SpecialClass activeSpecial;
 
+    private DataController DataControl;
     public SpecialManager SPmanager;
     public PhotonView pv;
     public PlayerObj Obj;
@@ -58,6 +59,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public GameObject[] _specialIcons;
     int SpecialInt;
     public bool _gameFinished;
+    public string winnerName;
     public bool resetBet;
     [Header("Fighters")]
     public GameObject[] Fighters;
@@ -66,9 +68,11 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     public bool differentSpl;
     public bool assignSpl;
     public bool _ResolutionVal;
-     
+    public Manager Mg;
 
-    public void ReloadApp() {       
+    public void ReloadApp() {
+        DataControl.GetComponent<AudioSource>().clip = DataControl.Sounds[0];
+        DataControl.GetComponent<AudioSource>().Stop();
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
     }
@@ -78,10 +82,15 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     private void Start() {
+        Mg = GameObject.FindGameObjectWithTag("Manager").GetComponent<Manager>();
+        DataControl = GameObject.FindWithTag("DataController").GetComponent<DataController>();
+        DataControl.GetComponent<AudioSource>().Stop();
+        DataControl.GetComponent<AudioSource>().clip = DataControl.Sounds[1];
+        DataControl.GetComponent<AudioSource>().Play();
         SPmanager = GameObject.FindGameObjectWithTag("Special").GetComponent<SpecialManager>();
         wages = GameObject.FindGameObjectWithTag("Wages").GetComponent<WagesManager>();
         CardVisible.SetActive(false);
-        _Visual_txt.text = "Place the bet and card.......";
+       _Visual_txt.text = "Place Your Bet";
        
         for (int i = 0; i < _PlayerList.Count; i++) {
             _PlayerList[i].GetComponent<PlayerObj>().currentHealth = _MaxHealth;
@@ -105,7 +114,13 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         }
         for (int i = 0; i < _PlayerList.Count; i++) {
             if (_PlayerList[i].GetComponent<PlayerObj>().healthbar.GetComponent<Image>().fillAmount <= 0 && !_gameFinished) {
-                print("player name"+ _PlayerList[i].GetComponent<PlayerObj>().avatarName);
+                // print("player name"+ _PlayerList[i].GetComponent<PlayerObj>().avatarName);
+                if (_PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
+                    winnerName = Mg.myName1.text;
+                }
+                else {
+                    winnerName = Mg.myName.text;
+                }
                 photonView.RPC("GameFinish", RpcTarget.AllBuffered, null);
             }
         }
@@ -131,10 +146,16 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         StartCoroutine("FinishGame");
     }
 
-    IEnumerator FinishGame() {
-        yield return new WaitForSeconds(2f);
+    IEnumerator FinishGame() {       
+            yield return new WaitForSeconds(2f);
         wages.Bet_btn.SetActive(false);
-        _Visual_txt.text = " Game Finished !!!";
+        while (winnerName == null) {
+            yield return new WaitForSeconds(.1f);
+        }
+        for (int i = 0; i < _PlaceCardList.Count; i++) {
+            _Visual_txt.text = "Game Over" + "\n" + winnerName + " Won The Game...";
+        }
+       
         CardVisible.SetActive(false);
     }
     //void _TimerCall() {     
@@ -241,20 +262,20 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                     
                         if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 0 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 0) {
                             _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
+                            _Visual_txt.text = "Same Cards - No one wins";
                         activeSpecial = SpecialClass.WinTies;
                          AfterBet();                      
 
                     }
                         else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 1 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 1) {
                             _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
+                            _Visual_txt.text = "Same Cards - No one wins";
                         activeSpecial = SpecialClass.WinTies;
                         AfterBet();
                     }
                         else if (_PlaceCardList[i].GetComponent<PlayerObj>().CardId == 2 && _PlaceCardList[j].GetComponent<PlayerObj>().CardId == 2) {
                             _TempBool = true;
-                            _Visual_txt.text = "Same Card........";
+                            _Visual_txt.text = "Same Cards - No one wins";
                         activeSpecial = SpecialClass.WinTies;
                         AfterBet();
                     }
@@ -264,7 +285,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+                           // _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + " WINS the round";
 
                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
@@ -279,7 +300,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
+                          //  _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "WINS the round";
                         _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");                       
@@ -292,7 +313,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+                           // _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + " WINS the round";
                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
                         _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character spear");
@@ -305,7 +326,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "Is Won........";
+                           // _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "WINS the round";
                         _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");
@@ -318,7 +339,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + "  Is Won........";
+                           // _Visual_txt.text = _PlaceCardList[i].GetComponent<PlayerObj>().avatarName + " WINS the round";
                         _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
                         _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character spear");
@@ -331,7 +352,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                             _TempBool = true;
                             _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
                             _PlaceCardList[j].GetComponent<PlayerObj>()._IsplayerWin = true;
-                            _Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "Is Won........";
+                            //_Visual_txt.text = _PlaceCardList[j].GetComponent<PlayerObj>().avatarName + "WINS the round";
                          _PlaceCardList[j].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
                         yield return new WaitForSeconds(0.2f);
                         _PlaceCardList[i].GetComponent<PlayerObj>().myFighter.Play("Character spear");
@@ -352,17 +373,33 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
     }
     void CallingSpecial() {
         for (int a = 0; a < _PlaceCardList.Count; a++) {
-            if (_PlaceCardList[a].GetComponent<PlayerObj>()._SpecialCardActive) {            
+            if (_PlaceCardList[a].GetComponent<PlayerObj>()._SpecialCardActive) {
                 switch (activeSpecial) {
                     case SpecialClass.WinTies:
                         SPmanager.WintiesSpecial();
+                        _PlaceCardList[a].GetComponent<PlayerObj>()._IsplayerWin = true;
+                        _Visual_txt.text = _PlaceCardList[a].GetComponent<PlayerObj>().avatarName + " WINS the tie";
+                        _PlaceCardList[a].GetComponent<PlayerObj>().myFighter.Play("Character one attack");
+                        for (int b = 0; b < _PlaceCardList.Count; b++) {
+                            if (!_PlaceCardList[b].GetComponent<PlayerObj>()._IsplayerWin) {                               
+                                _PlaceCardList[b].GetComponent<PlayerObj>().myFighter.Play("Character spear");
+                            }
+                        }
                         break;
                     case SpecialClass.LifeSteal:
                         SPmanager.LifestealSpecial();
+                        _Visual_txt.text = _PlaceCardList[a].GetComponent<PlayerObj>().avatarName + " Steals Life!";
                         break;
                     default:
-                        break;
+                     break;
                 }
+            }
+            else {
+
+                if (_PlaceCardList[a].GetComponent<PlayerObj>()._IsplayerWin) {
+                    _Visual_txt.text = _PlaceCardList[a].GetComponent<PlayerObj>().avatarName + " WINS the round";
+                }
+                
             }
         }
     }
@@ -388,13 +425,9 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
 
     IEnumerator Reset() {
         _FinishTurn = true;
-        //for (int i = 0; i < Fighters.Length; i++) {
-        //    Fighters[i].SetActive(false);
-        //    Fighters[i].GetComponentInChildren<Animator>().Play("Character one idle");
-        //}
+     
         yield return new WaitForSeconds(2f);
         for (int i = 0; i < _PlaceCardList.Count; i++) {
-            //for (int j = 0; j < _PlaceCardList.Count; j++) {
                 _PlaceCardList[i].GetComponent<PlayerObj>()._PlacedCard = false;
                 _PlaceCardList[i].GetComponent<PlayerObj>().CardId = 99;
                 _PlaceCardList[i].GetComponent<PlayerObj>()._IsplayerWin = false;
@@ -410,7 +443,6 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
                // _StartTimer = true;
                 wages.BetDetails.SetActive(false);
                 _PlaceCardList[i].GetComponent<PlayerObj>()._SpecialCardActive = false;
-            //}
         }
         wages.EnableImg.raycastTarget = false;
         resetBet = _PlayerList[0].GetComponent<PlayerObj>()._RemainingBet <= 0 && _PlayerList[1].GetComponent<PlayerObj>()._RemainingBet <= 0;
@@ -419,7 +451,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         yield return new WaitForSeconds(1f);
         _PlaceCardList.Clear();
         if (!_gameFinished) {
-            _Visual_txt.text = "Next Turn........";
+            _Visual_txt.text = "Next Turn ...";
         }
 
         yield return new WaitForSeconds(1.5f);
@@ -431,7 +463,7 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
         }
 
         if (!_gameFinished) {
-            _Visual_txt.text = "Place The Card........";          
+            _Visual_txt.text = "Place Your Bet";          
         }
 
         for (int i = 0; i < _PlayerList.Count; i++) {
@@ -448,11 +480,13 @@ public class Controller : MonoBehaviourPunCallbacks,IPunObservable
             stream.SendNext(_CardCnt);
             stream.SendNext(_IsBetActive);
             stream.SendNext(_TempBool);
+            stream.SendNext(winnerName);
         }
         else if (stream.IsReading) {         
             _CardCnt = (int)stream.ReceiveNext();
             _IsBetActive = (bool)stream.ReceiveNext();
-            _TempBool = (bool)stream.ReceiveNext();          
+            _TempBool = (bool)stream.ReceiveNext();
+            winnerName = (string)stream.ReceiveNext();
         }
     }
 }

@@ -1224,6 +1224,9 @@ MonoBehaviour:
   myName: 
   myCharacter: 
   MyId: 0
+  Sounds:
+  - {fileID: 8300000, guid: 3ac75e2c19f12d4409f6e539345351e0, type: 3}
+  - {fileID: 8300000, guid: 1b797b47c81a0d94885fd12cc5c181fd, type: 3}
 --- !u!4 &240513117
 Transform:
   m_ObjectHideFlags: 0
@@ -1248,11 +1251,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3ac75e2c19f12d4409f6e539345351e0, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

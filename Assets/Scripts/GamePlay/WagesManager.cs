@@ -110,9 +110,9 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
     
     // Final Click bet
     public void _FinalBetted_Fun() {
+        controller._Visual_txt.text = "Now Play Your Card";
         controller.CardVisible.SetActive(true);
         //_CurrentPlayerBet = bet;
-       // print("_BetValue-----" + _CurrentPlayerBet);
         Obj._placedBet = true;
         controller._IsBetActive = true;
         BetDetails.SetActive(false);
