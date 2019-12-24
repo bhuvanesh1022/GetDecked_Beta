@@ -24,9 +24,25 @@ public class DropManager : MonoBehaviour, IDropHandler
         {
             Item = DragManager.itemBeingDragged.gameObject;
 
-            myPlayer.cardPlaced = true;
-            myPlayer.placedCard = Item.GetComponent<DragManager>().CardID;
-            _gameController.PlaceCards();
+            for (int i = 0; i < _gameplayManager.playerList.Count; i++)
+            {
+                if (_gameplayManager.playerList[i].pv.IsMine)
+                {
+                    if (!_gameplayManager.playerList[i].cardPlaced)
+                    {
+                        _gameplayManager.playerList[i].cardPlaced = true;
+                        _gameplayManager.playerList[i].placedCard = Item.GetComponent<DragManager>().CardID;
+                        _gameController.PlaceCards();
+                    }
+                }
+            }
+
+            //if (!myPlayer.cardPlaced)
+            //{
+            //    myPlayer.cardPlaced = true;
+            //    myPlayer.placedCard = Item.GetComponent<DragManager>().CardID;
+            //    _gameController.PlaceCards();
+            //}
         }
     }
 }
