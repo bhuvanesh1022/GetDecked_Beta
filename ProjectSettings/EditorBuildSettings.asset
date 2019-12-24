@@ -9,6 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/LoginPage.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
+    path: Assets/Scenes/GamePageWithBet.unity
+    guid: a18ad3fe84723454b9c2287aad37355a
+    path: Assets/Scenes/GamePageBH.unity
+    guid: e58197e8ed73f428e97c22c59c1136b6
     path: Assets/Scenes/GamePage.unity
     guid: 1cb5200bfe3a0e8478b8f32b55e23ec5
   m_configObjects: {}
