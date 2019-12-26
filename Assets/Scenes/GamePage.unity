@@ -3044,6 +3044,7 @@ MonoBehaviour:
   _SliderTxt: {fileID: 400046400}
   Parent: {fileID: 2139478274}
   _TokenBool: 0
+  EnableImg: {fileID: 5826064377659716218}
 --- !u!114 &748709513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5257,6 +5258,7 @@ MonoBehaviour:
   _Maxspecialcount: 2
   differentSpl: 0
   assignSpl: 0
+  _ResolutionVal: 0
 --- !u!114 &1555197866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6981,7 +6983,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

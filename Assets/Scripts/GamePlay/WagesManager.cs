@@ -28,6 +28,8 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
     public TextMeshProUGUI _SliderTxt;
     public Transform Parent;
     public bool _TokenBool;
+    public Image EnableImg;
+
     private void Awake() {
         controller = GameObject.FindGameObjectWithTag("Controller").GetComponent<Controller>();
     }
@@ -108,12 +110,13 @@ public class WagesManager : MonoBehaviourPunCallbacks,IPunObservable
     
     // Final Click bet
     public void _FinalBetted_Fun() {
+        controller._Visual_txt.text = "Now Play Your Card";
         controller.CardVisible.SetActive(true);
         //_CurrentPlayerBet = bet;
-       // print("_BetValue-----" + _CurrentPlayerBet);
         Obj._placedBet = true;
         controller._IsBetActive = true;
         BetDetails.SetActive(false);
+        EnableImg.raycastTarget = true;
         for (int i = 0; i < controller._PlayerList.Count; i++) {
             if (!controller._PlayerList[i].GetComponent<PlayerObj>().pv.IsMine) {
 

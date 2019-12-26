@@ -1224,6 +1224,9 @@ MonoBehaviour:
   myName: 
   myCharacter: 
   MyId: 0
+  Sounds:
+  - {fileID: 8300000, guid: 3ac75e2c19f12d4409f6e539345351e0, type: 3}
+  - {fileID: 8300000, guid: 1b797b47c81a0d94885fd12cc5c181fd, type: 3}
 --- !u!4 &240513117
 Transform:
   m_ObjectHideFlags: 0
@@ -1248,11 +1251,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3ac75e2c19f12d4409f6e539345351e0, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3551,7 +3554,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Refres List
+  m_text: Refresh List
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9cac199a6bfe8444fa8062023e019569, type: 2}
   m_sharedMaterial: {fileID: 7362796329574089365, guid: 9cac199a6bfe8444fa8062023e019569,
@@ -3621,7 +3624,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1080253023}
-    characterCount: 11
+    characterCount: 12
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
