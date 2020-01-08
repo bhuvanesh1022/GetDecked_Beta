@@ -18,7 +18,7 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: in
     Server: 
     Port: 0
     Protocol: 0
@@ -34,5 +34,20 @@ MonoBehaviour:
   - CharacterJoined
   - ClearPlayerListings
   - ListPlayer
+  - CardPlacing
+  - PlaceCard
+  - PlacingCards
+  - Placecard
+  - Addplayers
+  - BettingForAll
+  - BetForAll
+  - AddHealthBar
+  - AssigningBet
+  - AfterBet
+  - WaitCall
+  - PlacedCard
+  - PlacedCardfun
+  - AddSpecialCard
+  - GameFinish
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1

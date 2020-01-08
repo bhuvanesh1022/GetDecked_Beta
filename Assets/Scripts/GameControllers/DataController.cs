@@ -6,7 +6,8 @@ public class DataController : MonoBehaviour
 
     public string myName;
     public string myCharacter;
-
+    public int MyId;
+    public AudioClip[] Sounds;
     private void Awake()
     {
         if (dataController == null)
